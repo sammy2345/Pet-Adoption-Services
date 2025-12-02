@@ -4,6 +4,8 @@ import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import PetsList from "./pages/PetsList";
 import AdoptPage from "./pages/AdoptPage";
+import SignIn from "./pages/SignIn";
+import StaffDashboard from "./pages/StaffDashboard"
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pets" element={<PetsList />} />
           <Route path="/adopt" element={<AdoptPage />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/staff" element={<StaffDashboard />} />
         </Routes>
       </main>
     </div>
