@@ -190,7 +190,7 @@ function StaffDashboard() {
               value={newPet.name}
               onChange={handleNewPetChange}
               required
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -204,7 +204,7 @@ function StaffDashboard() {
               value={newPet.species}
               onChange={handleNewPetChange}
               required
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -218,7 +218,7 @@ function StaffDashboard() {
               value={newPet.breed}
               onChange={handleNewPetChange}
               required
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -232,7 +232,7 @@ function StaffDashboard() {
               min="0"
               value={newPet.age}
               onChange={handleNewPetChange}
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400  rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -246,7 +246,7 @@ function StaffDashboard() {
               value={newPet.gender}
               onChange={handleNewPetChange}
               placeholder="Male / Female / Unknown"
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -260,7 +260,7 @@ function StaffDashboard() {
               value={newPet.location}
               onChange={handleNewPetChange}
               placeholder="Chicago, IL"
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 
@@ -273,7 +273,7 @@ function StaffDashboard() {
               rows="2"
               value={newPet.about}
               onChange={handleNewPetChange}
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+              className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
             />
           </div>
 

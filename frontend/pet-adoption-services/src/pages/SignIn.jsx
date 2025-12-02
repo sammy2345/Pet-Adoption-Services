@@ -75,7 +75,7 @@ function SignIn() {
 
             {/* Email */}
             <div>
-              <label className="block text-xs font-medium text-slate-700">
+              <label className="block text-xs font-medium text-slate-900">
                 Email
               </label>
               <input
@@ -83,7 +83,7 @@ function SignIn() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+                className="mt-1 w-full border border-slate-300 text-slate-400 rounded-md px-3 py-1.5 text-sm"
               />
             </div>
 
@@ -97,7 +97,7 @@ function SignIn() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm"
+                className="mt-1 w-full border border-slate-300 text-slate-700 rounded-md px-3 py-1.5 text-sm"
               />
             </div>
 
