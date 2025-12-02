@@ -1,49 +1,39 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import PetCard from "../components/PetCard";
 
-const MOCK_PETS = [
-  {
-    id: 1,
-    name: "Luna",
-    species: "Dog",
-    breed: "Mixed",
-    age: 2,
-    gender: "Female",
-    status: "Available",
-    shelterName: "Downtown Shelter",
-    isSpecial: false,
-  },
-  {
-    id: 2,
-    name: "Mittens",
-    species: "Cat",
-    breed: "Domestic Shorthair",
-    age: 3,
-    gender: "Male",
-    status: "Available",
-    shelterName: "West Side Rescue",
-    isSpecial: true,
-  },
-  {
-    id: 3,
-    name: "Rocky",
-    species: "Dog",
-    breed: "Pit Bull Mix",
-    age: 4,
-    gender: "Male",
-    status: "Pending",
-    shelterName: "Downtown Shelter",
-    isSpecial: false,
-  },
-];
-
 function PetsList() {
+  const [pets, setPets] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [speciesFilter, setSpeciesFilter] = useState("All");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // Filter pets by species and search text
+  // Fetch pets from backend
+  useEffect(() => {
+    setLoading(true);
+    setError("");
+
+    fetch("/api/pets")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch pets");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setPets(data);
+      })
+      .catch((err) => {
+        console.error("Error loading pets:", err);
+        setError("Could not load pets from the server.");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   const filteredPets = useMemo(() => {
-    return MOCK_PETS.filter((pet) => {
+    return pets.filter((pet) => {
       const matchesSpecies =
         speciesFilter === "All" || pet.species === speciesFilter;
 
@@ -51,14 +41,15 @@ function PetsList() {
       const matchesSearch =
         pet.name.toLowerCase().includes(text) ||
         pet.breed.toLowerCase().includes(text) ||
-        pet.shelterName.toLowerCase().includes(text);
+        pet.species.toLowerCase().includes(text) ||
+        (pet.shelter_name || "").toLowerCase().includes(text) ||
+        (pet.location || "").toLowerCase().includes(text);
 
       return matchesSpecies && matchesSearch;
     });
-  }, [searchTerm, speciesFilter]);
+  }, [pets, searchTerm, speciesFilter]);
 
   return (
-    // Center the whole pets page.
     <section className="space-y-4 w-full">
       {/* Header + filters */}
       <header className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
@@ -67,14 +58,14 @@ function PetsList() {
             Available pets
           </h1>
           <p className="text-sm text-slate-600">
-            List of pets currently up for adoption.
+            Data is loaded from the SQLite database through the backend API.
           </p>
         </div>
 
         <div className="flex gap-2">
           <input
             type="text"
-            placeholder="Search by name, breed, shelter..."
+            placeholder="Search by name, breed, species, shelter..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="border border-slate-300 rounded-md px-3 py-1 text-sm w-56"
@@ -92,16 +83,26 @@ function PetsList() {
         </div>
       </header>
 
-      {/* List of pet cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {filteredPets.length === 0 ? (
-          <p className="text-sm text-slate-600">
-            No pets match your filters yet.
-          </p>
-        ) : (
-          filteredPets.map((pet) => <PetCard key={pet.id} pet={pet} />)
-        )}
-      </div>
+      {/* Loading / error states */}
+      {loading && <p className="text-sm text-slate-600">Loading pets…</p>}
+      {error && !loading && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+
+      {/* Pet cards */}
+      {!loading && !error && (
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {filteredPets.length === 0 ? (
+            <p className="text-sm text-slate-600">
+              No pets match your filters yet.
+            </p>
+          ) : (
+            filteredPets.map((pet) => (
+              <PetCard key={pet.pet_id} pet={pet} />
+            ))
+          )}
+        </div>
+      )}
     </section>
   );
 }

@@ -1,0 +1,17 @@
+{
+  "name": "database-files",
+  "version": "1.0.0",
+  "description": "This folder contains the database for the Pet Adoption Services application. This folder included the database structure, SQL schema, add sample data for testing, that will generate the actual SQLite database that the backend will use.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "sqlite3": "^5.1.7"
+  }
+}

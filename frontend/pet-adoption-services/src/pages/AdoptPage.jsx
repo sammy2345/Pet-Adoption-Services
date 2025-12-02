@@ -1,40 +1,41 @@
-import { useState } from "react";
-
-//imple mock list of pets.
-const MOCK_PETS = [
-  {
-    id: 1,
-    name: "Luna",
-    species: "Dog",
-    breed: "Mixed",
-    status: "Available",
-  },
-  {
-    id: 2,
-    name: "Mittens",
-    species: "Cat",
-    breed: "Domestic Shorthair",
-    status: "Available",
-  },
-  {
-    id: 3,
-    name: "Rocky",
-    species: "Dog",
-    breed: "Pit Bull Mix",
-    status: "Pending",
-  },
-];
+import { useState, useEffect } from "react";
 
 function AdoptPage() {
-  // Form state stored in one object
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     phone: "",
-    selectedPetId: "",   // dropdown section for pets
+    selectedPetId: "",
     adoptionDate: "",
     notes: "",
   });
+
+  const [pets, setPets] = useState([]);
+  const [loadingPets, setLoadingPets] = useState(true);
+  const [petError, setPetError] = useState("");
+  const [submitStatus, setSubmitStatus] = useState(""); // success/error message
+
+  // Load pets for dropdown
+  useEffect(() => {
+    setLoadingPets(true);
+    setPetError("");
+
+    fetch("/api/pets")
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch pets");
+        return res.json();
+      })
+      .then((data) => {
+        setPets(data);
+      })
+      .catch((err) => {
+        console.error("Error loading pets for adoption:", err);
+        setPetError("Could not load pet list.");
+      })
+      .finally(() => {
+        setLoadingPets(false);
+      });
+  }, []);
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -44,14 +45,54 @@ function AdoptPage() {
     }));
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
-    console.log("Adoption form submitted:", form);
-    alert("Right now this just logs to the console. Backend comes later!");
+    setSubmitStatus("");
+
+    if (!form.selectedPetId) {
+      setSubmitStatus("Please select a pet.");
+      return;
+    }
+
+    const payload = {
+      user_id: 1,
+      pet_id: Number(form.selectedPetId),
+      adoptionDate: form.adoptionDate,
+      notes: form.notes,
+    };
+
+    try {
+      const res = await fetch("/api/applications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to submit application");
+      }
+
+      const data = await res.json();
+      console.log("Created application:", data);
+
+      setSubmitStatus("Application submitted successfully!");
+
+      //clear form 
+      setForm({
+        fullName: "",
+        email: "",
+        phone: "",
+        selectedPetId: "",
+        adoptionDate: "",
+        notes: "",
+      });
+    } catch (err) {
+      console.error(err);
+      setSubmitStatus("There was an error submitting your application.");
+    }
   }
 
-  // Only show pets that are available
-  const availablePets = MOCK_PETS.filter((pet) => pet.status === "Available");
+  const availablePets = pets.filter((pet) => pet.status === "Available");
 
   return (
     <section className="space-y-4 w-full">
@@ -60,12 +101,14 @@ function AdoptPage() {
       </h1>
 
       <p className="text-sm text-slate-600">
-        Fill out the form below to start an adoption request. Find the pet that you would like to adopt,
-        fill in an appointment date, phone number
-        , name, email,and notes.
+        Fill out the form below to start an adoption request. This will create
+        a record in the AdoptionApplications table.
       </p>
 
-      {/* Full-width white form area */}
+      {submitStatus && (
+        <p className="text-sm mt-1 text-slate-700">{submitStatus}</p>
+      )}
+
       <div className="w-full bg-white shadow-sm">
         <form
           onSubmit={handleSubmit}
@@ -116,25 +159,37 @@ function AdoptPage() {
             </div>
           </div>
 
-          {/*Dropdown to pick a pet */}
+          {/* Pet dropdown */}
           <div>
             <label className="block text-xs font-medium text-slate-700">
               Select a pet to adopt
             </label>
-            <select
-              name="selectedPetId"
-              required
-              value={form.selectedPetId}
-              onChange={handleChange}
-              className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white"
-            >
-              <option value="">Choose a pet...</option>
-              {availablePets.map((pet) => (
-                <option key={pet.id} value={pet.id}>
-                  {pet.name} — {pet.species} ({pet.breed})
-                </option>
-              ))}
-            </select>
+
+            {loadingPets && (
+              <p className="text-xs text-slate-500 mt-1">
+                Loading pets…
+              </p>
+            )}
+            {petError && !loadingPets && (
+              <p className="text-xs text-red-600 mt-1">{petError}</p>
+            )}
+
+            {!loadingPets && !petError && (
+              <select
+                name="selectedPetId"
+                required
+                value={form.selectedPetId}
+                onChange={handleChange}
+                className="mt-1 w-full border border-slate-300 rounded-md px-3 py-1.5 text-sm bg-white"
+              >
+                <option value="">Choose a pet...</option>
+                {availablePets.map((pet) => (
+                  <option key={pet.pet_id} value={pet.pet_id}>
+                    {pet.name} — {pet.species} ({pet.breed})
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {/* Preferred adoption date */}
