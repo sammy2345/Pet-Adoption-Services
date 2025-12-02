@@ -1,0 +1,7 @@
+This folder contains the database for the Pet Adoption Services application. This folder included the database structure, SQL schema, add sample data for testing, that will generate the actual SQLite database that the backend will use.
+
+seed.sql
+This file inserts sample data into the database. The data includes example users, one shelter, pet types, pets, sample adoption applications, appointments, and payments. It is mainly used for testing the backend and for demonstrating how the system works in the final video.
+
+pet_adoption.db
+This is the actual SQLite database file generated after running schema.sql and seed.sql. It contains all the tables and all the seeded data. The backend team can connect to this file directly when building the API. This file must be kept inside the backend folder so the backend server can access it.
